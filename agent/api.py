@@ -3,9 +3,9 @@ import threading
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from storage import Storage
-from mantle_rpc import MantleRPC
-import main as agent_main
+from agent.storage import Storage
+from agent.mantle_rpc import MantleRPC
+import agent.main as agent_main
 
 load_dotenv()
 
