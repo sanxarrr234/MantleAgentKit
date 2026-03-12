@@ -18,11 +18,12 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-storage = Storage()
+
+shared_storage = Storage()
 rpc = MantleRPC(os.getenv("MANTLE_RPC_URL", "https://rpc.sepolia.mantle.xyz"))
 
 
@@ -42,22 +43,31 @@ def root():
 
 @app.get("/agent/status")
 def agent_status():
-    return storage.get_status()
+    return shared_storage.get_status()
 
 
 @app.get("/agent/latest")
 def agent_latest():
-    latest = storage.get_latest()
+    latest = shared_storage.get_latest()
     if not latest:
-        raise HTTPException(status_code=404, detail="No data yet — agent may still be initializing")
+        
+        return {
+            "wallet": os.getenv("WALLET_ADDRESS", ""),
+            "balance_mnt": "0.000000",
+            "recent_txs": [],
+            "latest_block": 0,
+            "timestamp": None,
+            "loop": 0,
+            "uptime_seconds": 0,
+        }
     return latest
 
 
 @app.get("/agent/history")
 def agent_history():
     return {
-        "count": len(storage.get_history()),
-        "history": storage.get_history()
+        "count": len(shared_storage.get_history()),
+        "history": shared_storage.get_history()
     }
 
 
@@ -82,7 +92,12 @@ def wallet_info(address: str):
 
 
 def start_agent_thread():
-    t = threading.Thread(target=agent_main.run_agent, daemon=True)
+    
+    t = threading.Thread(
+        target=agent_main.run_agent,
+        args=(shared_storage,),
+        daemon=True
+    )
     t.start()
 
 
