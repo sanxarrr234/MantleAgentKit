@@ -39,7 +39,7 @@ function setNetStatus(online) {
   const label = document.getElementById("netLabel");
   if (online) {
     dot.className = "net-dot online";
-    label.textContent = "Mantle Testnet";
+    label.textContent = "Mantle Mainnet";
   } else {
     dot.className = "net-dot offline";
     label.textContent = "Disconnected";
