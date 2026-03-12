@@ -65,6 +65,7 @@ Dashboard displays live: balance, tx history, agent uptime
 ```
 MantleAgentKit/
 ├── agent/
+│   ├── __init__.py             # Package marker
 │   ├── main.py                 # Agent loop — runs every 5 min
 │   ├── mantle_rpc.py           # Mantle testnet RPC queries
 │   ├── api.py                  # FastAPI REST endpoints
@@ -75,12 +76,9 @@ MantleAgentKit/
 │   ├── index.html              # Main dashboard UI
 │   ├── style.css               # Styling
 │   └── app.js                  # Polling logic + UI updates
-├── docs/
-│   ├── how-it-works.md         # Architecture deep-dive
-│   ├── run-locally.md          # Local development guide
-│   └── deploy-railway.md       # Railway deployment guide
 ├── Procfile                    # Railway process definition
 ├── railway.json                # Railway config
+├── requirements.txt            # Root-level requirements (Railway)
 ├── .gitignore                  # Excludes .env and credentials
 └── README.md                   # This file
 ```
@@ -100,53 +98,69 @@ MantleAgentKit/
 git clone https://github.com/sanxarrr234/MantleAgentKit
 cd MantleAgentKit
 
-# 2. Install dependencies
-cd agent
+# 2. Install dependencies (run from root, not from agent/)
 pip install -r requirements.txt
 
 # 3. Configure environment
-cp .env.example .env
-# Edit .env — add your wallet address to monitor
-
-# 4. Run the agent
-python main.py
-
-# 5. Open dashboard
-# Open dashboard/index.html in browser
-# Or serve locally: python -m http.server 8080
+cp agent/.env.example agent/.env
+# Edit agent/.env — add your Mantle testnet wallet address
 ```
 
-### .env Configuration
-
+Edit `agent/.env`:
 ```env
-# Wallet address to monitor (no private key needed)
 WALLET_ADDRESS=0xYourWalletAddressHere
-
-# Mantle Testnet RPC (public — no API key needed)
 MANTLE_RPC_URL=https://rpc.sepolia.mantle.xyz
-
-# How often agent polls (seconds)
 POLL_INTERVAL=300
-
-# Port for API server
 PORT=8000
+```
+
+```bash
+# 4. Run the API server (from root directory)
+uvicorn agent.api:app --host 0.0.0.0 --port 8000
+
+# 5. Open dashboard
+# Edit dashboard/app.js line 1:
+# const API_BASE = "http://localhost:8000"
+# Then open dashboard/index.html in browser
+# Or serve locally:
+cd dashboard && python -m http.server 8080
+```
+
+> **Important:** Always run commands from the **root** of the repo, not from inside `agent/`. The package imports depend on this.
+
+### Termux (Android)
+
+```bash
+pkg install python git
+git clone https://github.com/sanxarrr234/MantleAgentKit
+cd MantleAgentKit
+pip install -r requirements.txt
+cp agent/.env.example agent/.env
+# Edit agent/.env with your wallet address
+uvicorn agent.api:app --host 0.0.0.0 --port 8000
 ```
 
 ---
 
 ## Deploy to Railway
 
-Full guide: [docs/deploy-railway.md](docs/deploy-railway.md)
-
-**Quick version:**
-
 1. Fork this repo
 2. Create account at [railway.app](https://railway.app)
 3. New Project → Deploy from GitHub → select this repo
-4. Add environment variables from `.env.example`
+4. Add environment variables in Railway dashboard → Variables:
+
+| Variable | Value |
+|---|---|
+| `WALLET_ADDRESS` | Your Mantle testnet wallet address |
+| `MANTLE_RPC_URL` | `https://rpc.sepolia.mantle.xyz` |
+| `POLL_INTERVAL` | `300` |
+| `PORT` | `8000` |
+
 5. Railway auto-detects `Procfile` and deploys
 
 Agent will be live and polling Mantle testnet within 2 minutes.
+
+> **Note:** Railway uses the root `Procfile` which runs: `uvicorn agent.api:app --host 0.0.0.0 --port $PORT`
 
 ---
 
@@ -156,10 +170,11 @@ Once deployed, the backend exposes:
 
 | Endpoint | Method | Description |
 |---|---|---|
-| `/` | GET | Health check + agent status |
+| `/` | GET | Health check + agent info |
 | `/agent/status` | GET | Agent uptime, loop count, last poll time |
+| `/agent/latest` | GET | Latest wallet snapshot |
+| `/agent/history` | GET | Full poll history (last 100 entries) |
 | `/wallet/{address}` | GET | Balance + recent txs for any Mantle testnet address |
-| `/agent/history` | GET | Full poll history log |
 
 ### Example Response
 
@@ -167,12 +182,12 @@ Once deployed, the backend exposes:
 // GET /wallet/0x1234...
 {
   "address": "0x1234...",
-  "balance_mnt": "12.48",
-  "last_tx": "0xabcd...",
-  "last_tx_time": "2026-03-12T17:30:00Z",
-  "tx_count_24h": 3,
+  "balance_mnt": "112.000000",
+  "recent_txs": [],
+  "latest_block": 18500000,
   "network": "Mantle Testnet",
-  "chain_id": 5003
+  "chain_id": 5003,
+  "explorer": "https://explorer.sepolia.mantle.xyz/address/0x1234..."
 }
 ```
 
@@ -182,10 +197,10 @@ Once deployed, the backend exposes:
 
 ### Phase 1 — Concept & Blueprint ✅
 *March 2026*
-- Architecture designed
-- Problem validated from real Kilo.ai deployment experience
+- Architecture designed from real Kilo.ai deployment experience
 - Read-only demo agent live on Mantle testnet
 - Dashboard live at mantle-agent-kit.vercel.app
+- Public API serving live chain data
 
 ### Phase 2 — MVP *(Q2 2026 — if resourced)*
 - Write capability: agent can execute simple on-chain actions
@@ -206,11 +221,9 @@ Once deployed, the backend exposes:
 
 This project is built by **1 developer + 3 AI models**. No team. No VC. No funding.
 
-Current status: **Phase 1 complete.** The demo agent is real — it connects to Mantle testnet, reads live data, and serves it via API to the dashboard.
+Current status: **Phase 1 complete.** The demo agent is real — it connects to Mantle testnet, reads live data, and serves it via API to the dashboard. Balance and transaction queries are fully functional and verifiable on-chain.
 
 Write capability and production deployment depend on available resources. Win or lose the Mantle Squad Bounty — this gets built when the funds arrive.
-
-If Mantle believes in this vision, ecosystem grants would directly accelerate Phase 2.
 
 ---
 
