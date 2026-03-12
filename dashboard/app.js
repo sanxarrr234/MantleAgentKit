@@ -1,10 +1,9 @@
-// MantleAgentKit Dashboard
-// Fetches live data from Railway backend
+
 
 const API_BASE = "https://mantleagentkit-production.up.railway.app";
 const REFRESH_INTERVAL = 30000; // 30 seconds
 
-// ── UTILS ──
+
 
 function formatUptime(seconds) {
   if (!seconds) return "—";
@@ -46,7 +45,7 @@ function setNetStatus(online) {
   }
 }
 
-// ── FETCH AGENT STATUS ──
+
 
 async function fetchAgentStatus() {
   try {
@@ -70,7 +69,7 @@ async function fetchAgentStatus() {
   }
 }
 
-// ── FETCH LATEST SNAPSHOT ──
+
 
 async function fetchLatest() {
   try {
@@ -80,7 +79,7 @@ async function fetchLatest() {
 
     document.getElementById("latestBlock").textContent = data.latest_block?.toLocaleString() || "—";
 
-    // Monitor wallet display
+ 
     const monitorEl = document.getElementById("monitorData");
     monitorEl.innerHTML = `
       <div class="monitor-grid">
@@ -98,12 +97,12 @@ async function fetchLatest() {
         </div>
         <div class="mg-item">
           <div class="mg-label">Network</div>
-          <div class="mg-val" style="color:var(--green)">Mantle Testnet</div>
+          <div class="mg-val" style="color:var(--green)">Mantle Mainnet</div>
         </div>
       </div>
     `;
 
-    // TX list
+    
     renderTxList(data.recent_txs || []);
 
   } catch (e) {
@@ -116,7 +115,7 @@ async function fetchLatest() {
   }
 }
 
-// ── RENDER TX LIST ──
+
 
 function renderTxList(txs) {
   const el = document.getElementById("txList");
@@ -151,7 +150,7 @@ function renderTxList(txs) {
   `).join("");
 }
 
-// ── FETCH HISTORY ──
+
 
 async function fetchHistory() {
   try {
@@ -183,7 +182,7 @@ async function fetchHistory() {
   }
 }
 
-// ── QUERY WALLET ──
+
 
 async function queryWallet() {
   const input = document.getElementById("walletInput").value.trim();
@@ -210,7 +209,7 @@ async function queryWallet() {
     resultEl.innerHTML = `
       <div class="wr-address">${data.address}</div>
       <div class="wr-balance">${parseFloat(data.balance_mnt).toFixed(6)}</div>
-      <div class="wr-network">MNT · Mantle Testnet · Chain ID ${data.chain_id}</div>
+      <div class="wr-network">MNT · Mantle Mainnet · Chain ID ${data.chain_id}</div>
       <a class="wr-explorer" href="${data.explorer}" target="_blank" rel="noopener">
         View on Mantle Explorer ↗
       </a>
@@ -220,7 +219,7 @@ async function queryWallet() {
             <div class="tx-item">
               <div class="tx-status ${tx.status}"></div>
               <div class="tx-info">
-                <a class="tx-hash" href="https://explorer.sepolia.mantle.xyz/tx/${tx.hash}" target="_blank">${shortenHash(tx.hash)}</a>
+                <a class="tx-hash" href="https://mantle.xyz/tx/${tx.hash}" target="_blank">${shortenHash(tx.hash)}</a>
                 <div class="tx-meta">${shortenHash(tx.from)} → ${shortenHash(tx.to)}</div>
               </div>
               <div class="tx-value">${parseFloat(tx.value_mnt || 0).toFixed(4)} MNT</div>
@@ -238,12 +237,12 @@ async function queryWallet() {
   }
 }
 
-// Allow Enter key on input
+
 document.getElementById("walletInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") queryWallet();
 });
 
-// ── INIT & REFRESH LOOP ──
+
 
 async function refresh() {
   await fetchAgentStatus();
