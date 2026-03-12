@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="@SANXARR234">
+<meta name="created-by" content="SANXARR234 — x.com/SANXARR234">
+<title>MantleAgentKit — 1 Human. 3 AIs. Zero VC.</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #181818;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --orange: #ff6b2b;
+    --orange2: #ff9a5c;
+    --green: #39d98a;
+    --blue: #4285f4;
+    --purple: #a78bfa;
+    --yellow: #f0b429;
+    --text: #e8e8e8;
+    --muted: #555;
+    --muted2: #888;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    width: 200%; height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+    animation: grain 8s steps(10) infinite;
+  }
+
+  @keyframes grain {
+    0%,100% { transform: translate(0,0); }
+    10% { transform: translate(-2%,-3%); }
+    20% { transform: translate(3%,2%); }
+    30% { transform: translate(-1%,4%); }
+    40% { transform: translate(4%,-1%); }
+    50% { transform: translate(-3%,3%); }
+    60% { transform: translate(2%,-4%); }
+    70% { transform: translate(-4%,1%); }
+    80% { transform: translate(1%,-2%); }
+    90% { transform: translate(-2%,4%); }
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .hero-tag::before {
+    content: '>';
+    font-weight: 700;
+    animation: blink 1.2s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 12vw, 120px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    animation: fadeUp 0.5s 0.05s ease both;
+    position: relative;
+  }
+
+  .hero-title .orange { color: var(--orange); }
+  .hero-title .stroke {
+    -webkit-text-stroke: 1px rgba(255,107,43,0.5);
+    color: transparent;
+  }
+
+  .hero-tagline {
+    margin-top: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--muted2);
+    letter-spacing: 0.05em;
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
+  .hero-tagline span { color: var(--orange); }
+
+  .hero-sub {
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--muted2);
+    max-width: 560px;
+    line-height: 1.7;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+
+  /* Big decorative text */
+  .hero-bg-text {
+    position: absolute;
+    top: 60px;
+    right: -20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 200px);
+    color: rgba(255,107,43,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    z-index: -1;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border2);
+    margin: 40px 0;
+    position: relative;
+  }
+
+  .divider::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 80px; height: 1px;
+    background: var(--orange);
+  }
+
+  /* ── SECTION LABEL ── */
+  .sec {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sec .sn { color: var(--orange); }
+  .sec::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px 30px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--border2); }
+
+  .card-title {
+    font-family: 'Barlow', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 600px) {
+    .stat-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .stat-item {
+    background: var(--bg2);
+    padding: 20px 18px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── PROBLEM SECTION ── */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .problem-grid { grid-template-columns: 1fr; }
+  }
+
+  .prob-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prob-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--orange);
+    opacity: 0.6;
+  }
+
+  .prob-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(255,107,43,0.1);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .prob-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .prob-desc {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+
+  /* ── AI STACK ── */
+  .ai-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .ai-row:hover { border-color: var(--border2); }
+
+  @media (max-width: 580px) {
+    .ai-row { grid-template-columns: 1fr; }
+  }
+
+  .ai-label {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+
+  .ai-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+
+  .ai-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .ai-body {
+    padding: 20px;
+    background: var(--bg2);
+  }
+
+  .ai-task {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .ai-desc {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+
+  .ai-gemini .ai-label { background: rgba(66,133,244,0.06); }
+  .ai-gemini .ai-name { color: #4285f4; }
+  .ai-gemini .ai-role { color: rgba(66,133,244,0.6); }
+
+  .ai-claude .ai-label { background: rgba(255,107,43,0.06); }
+  .ai-claude .ai-name { color: var(--orange); }
+  .ai-claude .ai-role { color: rgba(255,107,43,0.5); }
+
+  .ai-kilo .ai-label { background: rgba(167,139,250,0.06); }
+  .ai-kilo .ai-name { color: var(--purple); }
+  .ai-kilo .ai-role { color: rgba(167,139,250,0.5); }
+
+  /* ── ARCHITECTURE FLOW ── */
+  .arch-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .arch-node {
+    flex: 1;
+    min-width: 120px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 14px;
+    text-align: center;
+    position: relative;
+  }
+
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    color: var(--orange);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .arch-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .arch-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .arch-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .arch-desc {
+    font-size: 10px;
+    color: var(--muted2);
+    line-height: 1.5;
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--orange), var(--border) 60%, transparent);
+  }
+
+  .rm-item {
+    display: flex;
+    gap: 24px;
+    padding-bottom: 32px;
+    position: relative;
+  }
+
+  .rm-item:last-child { padding-bottom: 0; }
+
+  .rm-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    border: 1px solid;
+  }
+
+  .rm-dot.active {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(255,107,43,0.4);
+  }
+
+  .rm-dot.pending {
+    background: var(--bg3);
+    border-color: var(--border2);
+    color: var(--muted);
+  }
+
+  .rm-content { flex: 1; padding-top: 8px; }
+
+  .rm-phase {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .rm-phase.active { color: var(--orange); }
+  .rm-phase.pending { color: var(--muted); }
+
+  .rm-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .rm-desc {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.8;
+    margin-bottom: 10px;
+  }
+
+  .rm-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .rm-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    border: 1px solid;
+  }
+
+  .tag-done { color: var(--green); border-color: rgba(57,217,138,0.25); background: rgba(57,217,138,0.06); }
+  .tag-wip { color: var(--orange); border-color: rgba(255,107,43,0.25); background: rgba(255,107,43,0.06); }
+  .tag-planned { color: var(--muted2); border-color: var(--border); background: transparent; }
+  .tag-blocked { color: var(--yellow); border-color: rgba(240,180,41,0.25); background: rgba(240,180,41,0.06); }
+
+  /* ── HONEST NOTE ── */
+  .honest-box {
+    border: 1px solid rgba(255,107,43,0.3);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 4px 4px 0;
+    padding: 24px 28px;
+    background: rgba(255,107,43,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .honest-box::before {
+    content: '//';
+    position: absolute;
+    top: 16px; right: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: rgba(255,107,43,0.08);
+    line-height: 1;
+  }
+
+  .honest-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .honest-text {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--muted2);
+  }
+
+  .honest-text strong { color: var(--text); }
+
+  /* ── MANTLE WHY ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .why-grid { grid-template-columns: 1fr; }
+  }
+
+  .why-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .why-item:hover { border-color: rgba(255,107,43,0.3); }
+
+  .why-icon { font-size: 24px; margin-bottom: 10px; }
+
+  .why-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .why-desc {
+    font-size: 11px;
+    color: var(--muted2);
+    line-height: 1.7;
+  }
+
+  .why-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--orange);
+    margin-top: 8px;
+    line-height: 1;
+  }
+
+  /* ── TERMINAL BLOCK ── */
+  .terminal {
+    background: #0d0d0d;
+    border: 1px solid rgba(255,107,43,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+
+  .term-header {
+    background: rgba(255,107,43,0.06);
+    border-bottom: 1px solid rgba(255,107,43,0.1);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .term-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .term-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .td-r { background: #ff5f57; }
+  .td-y { background: #ffbd2e; }
+  .td-g { background: #28c840; }
+
+  .term-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-left: 4px;
+  }
+
+  .term-body {
+    padding: 18px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    line-height: 2;
+    color: #6a8a6a;
+  }
+
+  .term-body .t-prompt { color: var(--orange); }
+  .term-body .t-cmd { color: #c8c8c8; }
+  .term-body .t-out { color: #5a7a5a; }
+  .term-body .t-success { color: var(--green); }
+  .term-body .t-warn { color: var(--yellow); }
+  .term-body .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--orange);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 60px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .footer-left {}
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .footer-logo span { color: var(--orange); }
+
+  .footer-by {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-by a {
+    color: var(--orange);
+    text-decoration: none;
+  }
+
+  .footer-disc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 420px;
+    text-align: right;
+  }
+
+  /* ── FIXED WM ── */
+  .wm {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,107,43,0.25);
+    border-radius: 4px;
+    padding: 8px 14px 8px 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .wm:hover {
+    border-color: rgba(255,107,43,0.6);
+    background: rgba(255,107,43,0.08);
+    transform: translateY(-2px);
+  }
+
+  .wm-av {
+    width: 24px; height: 24px;
+    border-radius: 2px;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .wm-txt { display: flex; flex-direction: column; gap: 1px; }
+  .wm-by2 { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--muted); letter-spacing: 0.1em; line-height: 1; }
+  .wm-handle { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: var(--orange); line-height: 1; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal { animation: fadeUp 0.5s ease both; }
+
+  ::-webkit-scrollbar { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,107,43,0.3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- FIXED WM -->
+<a class="wm" href="https://x.com/SANXARR234" target="_blank" rel="noopener">
+  <div class="wm-av">S</div>
+  <div class="wm-txt">
+    <span class="wm-by2">Created by</span>
+    <span class="wm-handle">@SANXARR234</span>
+  </div>
+</a>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg-text">MAK</div>
+    <div class="hero-tag">Mantle Squad Bounty · Topic 2: Builders</div>
+    <h1 class="hero-title">
+      MANTLE<br>
+      <span class="orange">AGENT</span><span class="stroke">KIT</span>
+    </h1>
+    <p class="hero-tagline"><span>1 Human.</span> 3 AIs. Zero VC. Built on Mantle.</p>
+    <p class="hero-sub">A low-code launchpad for deploying autonomous AI agents on the Mantle chain. Built by one person, powered by three AI models, starting from absolute zero.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-row reveal">
+    <div class="stat-item">
+      <div class="stat-val" style="color:var(--orange)">1</div>
+      <div class="stat-desc">Human Builder</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val" style="color:#4285f4">3</div>
+      <div class="stat-desc">AI Models</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val" style="color:var(--green)">$0.01</div>
+      <div class="stat-desc">Mantle Gas/Tx</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-val" style="color:var(--yellow)">$0</div>
+      <div class="stat-desc">VC Funding</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROBLEM -->
+  <div class="sec reveal"><span class="sn">01</span> The Problem</div>
+
+  <div class="card reveal" style="margin-bottom:20px">
+    <div class="card-title">AI agents exist. Deploying them on-chain doesn't.</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.8">Building an autonomous AI agent that actually interacts with a blockchain is still a deeply technical process — requiring smart contract knowledge, RPC configuration, cloud infrastructure, and continuous monitoring. Most people who could benefit from on-chain agents never build one. Not because they lack the idea. Because the barrier is too high.</p>
+  </div>
+
+  <div class="problem-grid reveal">
+    <div class="prob-item">
+      <div class="prob-num">01</div>
+      <div class="prob-title">Too Technical</div>
+      <div class="prob-desc">Deploying an agent requires cloud setup, RPC config, wallet management, and smart contract interaction — simultaneously. Zero guidance for non-devs.</div>
+    </div>
+    <div class="prob-item">
+      <div class="prob-num">02</div>
+      <div class="prob-title">Too Expensive on L1</div>
+      <div class="prob-desc">An autonomous agent running loops on Ethereum mainnet burns gas with every action. At $5–50 per transaction, agent economics break immediately.</div>
+    </div>
+    <div class="prob-item">
+      <div class="prob-num">03</div>
+      <div class="prob-title">No Visual Interface</div>
+      <div class="prob-desc">Existing agent frameworks (LangChain, AutoGPT, etc.) are terminal-first. Non-technical users have no way to define, monitor, or control agents visually.</div>
+    </div>
+    <div class="prob-item">
+      <div class="prob-num">04</div>
+      <div class="prob-title">No Mantle-Native Tooling</div>
+      <div class="prob-desc">Despite Mantle's low fees making it ideal for agent loops, there's no dedicated tool for deploying AI agents specifically on Mantle ecosystem.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SOLUTION -->
+  <div class="sec reveal"><span class="sn">02</span> The Solution</div>
+
+  <div class="card reveal">
+    <div class="card-title">MantleAgentKit — Define. Deploy. Monitor.</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.8;margin-bottom:20px">A low-code web interface where anyone — including a teenager with a laptop — can define an AI agent's goal, connect it to Mantle chain, and deploy it in minutes. No smart contract knowledge required. No terminal. Just intent.</p>
+
+    <div class="terminal">
+      <div class="term-header">
+        <div class="term-dots">
+          <div class="term-dot td-r"></div>
+          <div class="term-dot td-y"></div>
+          <div class="term-dot td-g"></div>
+        </div>
+        <span class="term-title">mantle-agentkit — agent_deploy.sh</span>
+      </div>
+      <div class="term-body">
+<span class="t-prompt">$</span> <span class="t-cmd">agentkit init --chain mantle --goal "monitor wallet 0x... and alert if balance drops below 10 MNT"</span>
+<span class="t-out">→ Connecting to Mantle RPC...</span>
+<span class="t-success">✓ Connected. Chain ID: 5000</span>
+<span class="t-out">→ Configuring AI agent logic via Claude...</span>
+<span class="t-success">✓ Agent logic compiled</span>
+<span class="t-out">→ Deploying to cloud runtime...</span>
+<span class="t-success">✓ Agent active. Loop interval: 5min. Gas/loop: ~$0.01</span>
+<span class="t-warn">⚡ Estimated monthly cost: $0.06 in gas fees</span>
+<span class="t-prompt">$</span> <span class="t-cursor"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ARCHITECTURE -->
+  <div class="sec reveal"><span class="sn">03</span> How It Works</div>
+
+  <div class="card reveal">
+    <div class="card-title">Architecture Flow</div>
+    <p style="font-size:12px;color:var(--muted2);line-height:1.8;margin-bottom:20px">User defines agent goal in plain language → Claude translates it into executable logic → Kilo.ai handles cloud deployment → Agent runs autonomously on Mantle chain → Gemini monitors external data for triggers.</p>
+
+    <div class="arch-flow">
+      <div class="arch-node">
+        <div class="arch-icon">👤</div>
+        <div class="arch-label">Input</div>
+        <div class="arch-name">User Intent</div>
+        <div class="arch-desc">Plain language goal via web UI</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="border-color:rgba(255,107,43,0.3)">
+        <div class="arch-icon">🧠</div>
+        <div class="arch-label">Claude</div>
+        <div class="arch-name">Logic Engine</div>
+        <div class="arch-desc">Translates intent → executable agent logic</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="border-color:rgba(167,139,250,0.3)">
+        <div class="arch-icon">⚙️</div>
+        <div class="arch-label">Kilo.ai</div>
+        <div class="arch-name">Deploy Layer</div>
+        <div class="arch-desc">Cloud runtime, terminal execution</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="border-color:rgba(57,217,138,0.3)">
+        <div class="arch-icon">🔗</div>
+        <div class="arch-label">Mantle</div>
+        <div class="arch-name">Execution Chain</div>
+        <div class="arch-desc">On-chain actions at $0.01/tx</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-node" style="border-color:rgba(66,133,244,0.3)">
+        <div class="arch-icon">🔍</div>
+        <div class="arch-label">Gemini</div>
+        <div class="arch-name">Data Monitor</div>
+        <div class="arch-desc">External triggers, news, price feeds</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- AI ROLES -->
+  <div class="sec reveal"><span class="sn">04</span> AI Stack — Each Model Has One Job</div>
+
+  <div class="ai-stack reveal">
+    <div class="ai-row ai-gemini">
+      <div class="ai-label">
+        <div class="ai-name">Gemini</div>
+        <div class="ai-role">External Monitor</div>
+      </div>
+      <div class="ai-body">
+        <div class="ai-task">Real-time data ingestion & trigger detection</div>
+        <div class="ai-desc">Gemini continuously monitors external data sources — news, price feeds, on-chain events — and feeds verified triggers to the agent. If Gemini can't source it, the agent doesn't act on it. This prevents hallucination-driven execution.</div>
+      </div>
+    </div>
+    <div class="ai-row ai-claude">
+      <div class="ai-label">
+        <div class="ai-name">Claude</div>
+        <div class="ai-role">Logic Compiler</div>
+      </div>
+      <div class="ai-body">
+        <div class="ai-task">Natural language → agent logic translation</div>
+        <div class="ai-desc">User types what they want the agent to do. Claude converts that into structured, executable logic — conditions, actions, error handling. Claude also handles the frontend UI of MantleAgentKit itself, because that's what it does best.</div>
+      </div>
+    </div>
+    <div class="ai-row ai-kilo">
+      <div class="ai-label">
+        <div class="ai-name">Kilo.ai</div>
+        <div class="ai-role">Runtime Engine</div>
+      </div>
+      <div class="ai-body">
+        <div class="ai-task">Cloud deployment & autonomous execution</div>
+        <div class="ai-desc">Kilo.ai handles the actual deployment — spins up cloud agent, runs terminal commands, manages the agent loop. This is based on real personal experience: I've deployed autonomous agents via Kilo capable of swap execution, wallet reporting, and self-reconstruction. MantleAgentKit productizes that workflow.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- WHY MANTLE -->
+  <div class="sec reveal"><span class="sn">05</span> Why Mantle — Not Arbitrum. Not Base.</div>
+
+  <div class="why-grid reveal">
+    <div class="why-item">
+      <div class="why-icon">⛽</div>
+      <div class="why-title">Gas Economics</div>
+      <div class="why-desc">Agent loops need frequent on-chain calls. On Ethereum, that's economically broken. On Mantle:</div>
+      <div class="why-val">$0.01/tx</div>
+    </div>
+    <div class="why-item">
+      <div class="why-icon">🧩</div>
+      <div class="why-title">EVM Compatible</div>
+      <div class="why-desc">Full EVM compatibility means existing Ethereum tooling works out of the box. Same wallet, same address format, same dev tools.</div>
+      <div class="why-val" style="font-size:20px;margin-top:12px">MetaMask Ready</div>
+    </div>
+    <div class="why-item">
+      <div class="why-icon">📦</div>
+      <div class="why-title">Modular Architecture</div>
+      <div class="why-desc">EigenDA for data availability cuts costs 90–95% vs L1. This isn't just cheap — it's structurally cheap. The cost advantage is architectural, not temporary.</div>
+      <div class="why-val">−95% Cost</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ROADMAP -->
+  <div class="sec reveal"><span class="sn">06</span> Roadmap</div>
+
+  <div class="roadmap reveal">
+
+    <div class="rm-item">
+      <div class="rm-dot active">P1</div>
+      <div class="rm-content">
+        <div class="rm-phase active">Phase 1 · Now — March 2026</div>
+        <div class="rm-title">Concept & Blueprint ✓</div>
+        <div class="rm-desc">Architecture designed. Problem validated from real Kilo.ai deployment experience. Tech stack defined. Full workflow documented and live at mantle-ai.vercel.app. This is Phase 1 — and it's already done.</div>
+        <div class="rm-tags">
+          <span class="rm-tag tag-done">Architecture ✓</span>
+          <span class="rm-tag tag-done">Problem Validated ✓</span>
+          <span class="rm-tag tag-done">Blueprint Live ✓</span>
+          <span class="rm-tag tag-done">Stack Defined ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rm-item">
+      <div class="rm-dot pending">P2</div>
+      <div class="rm-content">
+        <div class="rm-phase pending">Phase 2 · Q2 2026 — If Resourced</div>
+        <div class="rm-title">MVP Build</div>
+        <div class="rm-desc">Web UI for agent definition. Basic templates: wallet monitor, swap trigger, daily report. Mantle testnet integration. Real deployment via Kilo.ai cloud runtime. Estimated cost: $60–110/month in compute + AI credits.</div>
+        <div class="rm-tags">
+          <span class="rm-tag tag-planned">Web UI</span>
+          <span class="rm-tag tag-planned">Agent Templates</span>
+          <span class="rm-tag tag-planned">Mantle Testnet</span>
+          <span class="rm-tag tag-blocked">Needs: $60–110/mo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rm-item">
+      <div class="rm-dot pending">P3</div>
+      <div class="rm-content">
+        <div class="rm-phase pending">Phase 3 · Q3–Q4 2026 — If Funded</div>
+        <div class="rm-title">Public Beta</div>
+        <div class="rm-desc">Mainnet deployment. Multi-agent support. Dashboard for monitoring active agents. Community templates marketplace. This phase is realistic only with Mantle ecosystem grant or external support.</div>
+        <div class="rm-tags">
+          <span class="rm-tag tag-planned">Mainnet Deploy</span>
+          <span class="rm-tag tag-planned">Multi-Agent</span>
+          <span class="rm-tag tag-planned">Dashboard</span>
+          <span class="rm-tag tag-blocked">Needs: Grant / Funding</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- HONEST NOTE -->
+  <div class="sec reveal"><span class="sn">07</span> Honest Note</div>
+
+  <div class="honest-box reveal">
+    <div class="honest-label">// No BS Disclosure</div>
+    <div class="honest-text">
+      <strong>This project is currently 1 human + 3 AI models. No team. No funding. No VC.</strong><br><br>
+      Phase 1 is complete — the concept is validated, the blueprint is live, the workflow is real and based on actual personal experience deploying autonomous agents via Kilo.ai.<br><br>
+      Phase 2 onward requires real resources: cloud compute, AI credits, and time. The estimated barrier is $60–110/month — not insurmountable, but real.<br><br>
+      <strong>Win or lose this bounty, I will continue building MantleAgentKit when I have the funds.</strong> This isn't a bounty farm entry. This is a real problem I encountered personally, and a solution I genuinely want to exist.<br><br>
+      If Mantle believes in this vision, a grant or ecosystem support would directly accelerate Phase 2. If not, I'll get there anyway — just slower.
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <div class="footer-logo">MANTLE<span>AGENT</span>KIT</div>
+      <div class="footer-by">
+        Built by <a href="https://x.com/SANXARR234" target="_blank">@SANXARR234</a> ·
+        <a href="https://mantle-ai.vercel.app" target="_blank" style="color:var(--muted2);text-decoration:none">mantle-ai.vercel.app</a> ·
+        <a href="https://github.com/sanxarrr234/Mantle-AI" target="_blank" style="color:var(--muted2);text-decoration:none">github</a>
+      </div>
+    </div>
+    <div class="footer-disc">
+      Mantle Squad Bounty Program · Topic 2: Builders<br>
+      Concept only. No financial advice. DYOR.<br>
+      1 Human. 3 AIs. Zero VC. Real vision.
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'fadeUp 0.5s ease both';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
