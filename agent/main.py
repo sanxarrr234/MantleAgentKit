@@ -17,19 +17,20 @@ log = logging.getLogger(__name__)
 
 WALLET_ADDRESS = os.getenv("WALLET_ADDRESS", "")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "300"))
-MANTLE_RPC_URL = os.getenv("MANTLE_RPC_URL", "https://rpc.sepolia.mantle.xyz")
+MANTLE_RPC_URL = os.getenv("MANTLE_RPC_URL", "https://rpc.mantle.xyz")
 
 rpc = MantleRPC(MANTLE_RPC_URL)
 
 
 def run_agent(storage: Storage = None):
-  
+    # Use provided shared storage, or create own if run standalone
     if storage is None:
         storage = Storage()
 
     log.info("=" * 50)
     log.info("MantleAgentKit — Starting Agent")
     log.info(f"Wallet  : {WALLET_ADDRESS or 'NOT SET'}")
+    log.info(f"Network : Mantle Mainnet")
     log.info(f"Interval: {POLL_INTERVAL}s")
     log.info("=" * 50)
 
