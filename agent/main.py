@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from agent.mantle_rpc import MantleRPC
 from agent.storage import Storage
-from storage import Storage
 
 load_dotenv()
 
