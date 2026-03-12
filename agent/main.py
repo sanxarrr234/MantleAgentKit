@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from agent.mantle_rpc import MantleRPC
+from agent.storage import Storage
 
 load_dotenv()
 
@@ -21,17 +22,15 @@ MANTLE_RPC_URL = os.getenv("MANTLE_RPC_URL", "https://rpc.sepolia.mantle.xyz")
 storage = Storage()
 rpc = MantleRPC(MANTLE_RPC_URL)
 
-
 def run_agent():
     log.info("=" * 50)
     log.info("MantleAgentKit — Starting Agent")
-    log.info(f"Network : Mantle Testnet")
     log.info(f"Wallet  : {WALLET_ADDRESS or 'NOT SET'}")
     log.info(f"Interval: {POLL_INTERVAL}s")
     log.info("=" * 50)
 
     if not WALLET_ADDRESS:
-        log.error("WALLET_ADDRESS not set in .env — agent cannot start.")
+        log.error("WALLET_ADDRESS not set — agent cannot start.")
         return
 
     loop_count = 0
@@ -40,12 +39,10 @@ def run_agent():
     while True:
         loop_count += 1
         log.info(f"Loop #{loop_count} — polling Mantle testnet...")
-
         try:
             balance = rpc.get_balance(WALLET_ADDRESS)
             txs = rpc.get_recent_transactions(WALLET_ADDRESS)
             block = rpc.get_latest_block()
-
             snapshot = {
                 "loop": loop_count,
                 "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -55,20 +52,13 @@ def run_agent():
                 "latest_block": block,
                 "uptime_seconds": int((datetime.utcnow() - start_time).total_seconds()),
             }
-
             storage.save_snapshot(snapshot)
-
             log.info(f"Balance : {balance} MNT")
-            log.info(f"Txs     : {len(txs)} recent transactions")
             log.info(f"Block   : {block}")
-            log.info(f"Next poll in {POLL_INTERVAL}s...")
-
         except Exception as e:
             log.error(f"Poll failed: {e}")
             storage.save_error(str(e), loop_count)
-
         time.sleep(POLL_INTERVAL)
-
 
 if __name__ == "__main__":
     run_agent()
