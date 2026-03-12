@@ -1,7 +1,7 @@
 // MantleAgentKit Dashboard
 // Fetches live data from Railway backend
 
-const API_BASE = "https://your-railway-app.railway.app"; // UPDATE THIS after Railway deploy
+const API_BASE = "https://web-production-d94fcd.up.railway.app"; // UPDATE THIS after Railway deploy
 const REFRESH_INTERVAL = 30000; // 30 seconds
 
 // ── UTILS ──
