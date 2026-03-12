@@ -3,7 +3,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-MANTLE_EXPLORER_API = "https://explorer.mantle.xyz/api"
+MANTLE_EXPLORER_API = "api.mantlescan.xyz"
 
 
 class MantleRPC:
