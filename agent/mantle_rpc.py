@@ -3,7 +3,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-MANTLE_EXPLORER_API = "https://explorer.sepolia.mantle.xyz/api"
+MANTLE_EXPLORER_API = "https://explorer.mantle.xyz/api"
 
 
 class MantleRPC:
@@ -27,7 +27,6 @@ class MantleRPC:
         return data.get("result")
 
     def get_balance(self, address: str) -> str:
-        """Returns balance in MNT (human readable)"""
         try:
             hex_balance = self._call("eth_getBalance", [address, "latest"])
             wei = int(hex_balance, 16)
@@ -38,7 +37,6 @@ class MantleRPC:
             return "0.000000"
 
     def get_latest_block(self) -> int:
-        """Returns latest block number"""
         try:
             hex_block = self._call("eth_blockNumber", [])
             return int(hex_block, 16)
@@ -47,7 +45,6 @@ class MantleRPC:
             return 0
 
     def get_recent_transactions(self, address: str, limit: int = 5) -> list:
-        """Fetch recent transactions from Mantle testnet explorer"""
         try:
             params = {
                 "module": "account",
