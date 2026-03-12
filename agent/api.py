@@ -11,7 +11,7 @@ load_dotenv()
 
 app = FastAPI(
     title="MantleAgentKit API",
-    description="Read-only AI agent monitoring Mantle testnet",
+    description="Read-only AI agent monitoring Mantle mainnet",
     version="0.1.0"
 )
 
@@ -22,9 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 shared_storage = Storage()
-rpc = MantleRPC(os.getenv("MANTLE_RPC_URL", "https://rpc.sepolia.mantle.xyz"))
+rpc = MantleRPC(os.getenv("MANTLE_RPC_URL", "https://rpc.mantle.xyz"))
 
 
 @app.get("/")
@@ -33,8 +32,8 @@ def root():
         "name": "MantleAgentKit",
         "version": "0.1.0",
         "mode": "DEMO — Read-Only",
-        "network": "Mantle Testnet",
-        "chain_id": 5003,
+        "network": "Mantle Mainnet",
+        "chain_id": 5000,
         "status": "running",
         "built_by": "@SANXARR234",
         "repo": "https://github.com/sanxarrr234/MantleAgentKit",
@@ -50,7 +49,6 @@ def agent_status():
 def agent_latest():
     latest = shared_storage.get_latest()
     if not latest:
-        
         return {
             "wallet": os.getenv("WALLET_ADDRESS", ""),
             "balance_mnt": "0.000000",
@@ -85,14 +83,13 @@ def wallet_info(address: str):
         "balance_mnt": balance,
         "recent_txs": txs,
         "latest_block": block,
-        "network": "Mantle Testnet",
-        "chain_id": 5003,
-        "explorer": f"https://explorer.sepolia.mantle.xyz/address/{address}",
+        "network": "Mantle Mainnet",
+        "chain_id": 5000,
+        "explorer": f"https://explorer.mantle.xyz/address/{address}",
     }
 
 
 def start_agent_thread():
-    
     t = threading.Thread(
         target=agent_main.run_agent,
         args=(shared_storage,),
