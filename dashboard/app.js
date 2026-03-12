@@ -136,7 +136,7 @@ function renderTxList(txs) {
       <div class="tx-status ${tx.status}"></div>
       <div class="tx-info">
         <a class="tx-hash"
-           href="https://explorer.sepolia.mantle.xyz/tx/${tx.hash}"
+           href="https://mantle.xyz/tx/${tx.hash}"
            target="_blank"
            rel="noopener">
           ${shortenHash(tx.hash)}
