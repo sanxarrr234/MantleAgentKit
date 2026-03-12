@@ -2,8 +2,8 @@ import time
 import logging
 import os
 from datetime import datetime
+from dotenv import load_dotenv
 from agent.mantle_rpc import MantleRPC
-from agent.storage import Storage
 
 load_dotenv()
 
