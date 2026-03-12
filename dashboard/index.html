@@ -10,135 +10,124 @@
 </head>
 <body>
 
-<!-- FIXED WM -->
 <a class="wm" href="https://x.com/SANXARR234" target="_blank" rel="noopener">
-  <div class="wm-av">S</div>
-  <div class="wm-txt">
-    <span class="wm-by">Created by</span>
-    <span class="wm-handle">@SANXARR234</span>
-  </div>
+ <div class="wm-av">S</div>
+ <div class="wm-txt">
+ <span class="wm-by">Created by</span>
+ <span class="wm-handle">@SANXARR234</span>
+ </div>
 </a>
-
 <div class="wrap">
-
-  <!-- HEADER -->
-  <header>
-    <div class="header-left">
-      <div class="logo">MANTLE<span>AGENT</span>KIT</div>
-      <div class="logo-sub">Live Agent Dashboard · Mantle Mainnet</div>
-    </div>
-    <div class="header-right">
-      <div class="demo-badge">DEMO · READ-ONLY</div>
-      <div class="network-badge">
-        <span class="net-dot" id="netDot"></span>
-        <span id="netLabel">Connecting...</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- AGENT STATUS ROW -->
-  <div class="status-row">
-    <div class="stat-box">
-      <div class="stat-label">Agent Status</div>
-      <div class="stat-val" id="agentStatus">—</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Uptime</div>
-      <div class="stat-val" id="agentUptime">—</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Loop Count</div>
-      <div class="stat-val" id="loopCount">—</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Last Poll</div>
-      <div class="stat-val" id="lastPoll">—</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-label">Latest Block</div>
-      <div class="stat-val" id="latestBlock">—</div>
-    </div>
-  </div>
-
-  <!-- WALLET LOOKUP -->
-  <div class="section">
-    <div class="sec-label"><span class="sn">01</span> Monitor Any Wallet</div>
-    <div class="card">
-      <div class="card-title">Query Mantle Mainnet</div>
-      <p class="card-desc">Enter any Mantle testnet wallet address. The agent will fetch live balance and recent transactions — no wallet connection required.</p>
-      <div class="input-row">
-        <input
-          type="text"
-          id="walletInput"
-          class="wallet-input"
-          placeholder="0x... Mantle testnet address"
-          spellcheck="false"
-        />
-        <button class="query-btn" id="queryBtn" onclick="queryWallet()">
-          <span id="queryBtnText">Query Agent</span>
-        </button>
-      </div>
-      <div id="walletResult" class="wallet-result hidden"></div>
-    </div>
-  </div>
-
-  <!-- AGENT MONITORED WALLET -->
-  <div class="section">
-    <div class="sec-label"><span class="sn">02</span> Agent's Monitored Wallet</div>
-    <div class="card" id="monitorCard">
-      <div class="card-title">Primary Watch Target</div>
-      <div id="monitorData">
-        <div class="loading-line"></div>
-        <div class="loading-line short"></div>
-        <div class="loading-line"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RECENT TX -->
-  <div class="section">
-    <div class="sec-label"><span class="sn">03</span> Recent Transactions</div>
-    <div class="card">
-      <div class="card-title">Latest On-Chain Activity</div>
-      <div id="txList">
-        <div class="loading-line"></div>
-        <div class="loading-line short"></div>
-        <div class="loading-line"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- POLL HISTORY -->
-  <div class="section">
-    <div class="sec-label"><span class="sn">04</span> Agent Poll History</div>
-    <div class="card">
-      <div class="card-title">Loop Log</div>
-      <div id="historyList">
-        <div class="loading-line"></div>
-        <div class="loading-line short"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-left">
-      <div class="footer-logo">MANTLE<span>AGENT</span>KIT</div>
-      <div class="footer-links">
-        <a href="https://x.com/SANXARR234" target="_blank">@SANXARR234</a>
-        <span>·</span>
-        <a href="https://github.com/sanxarrr234/MantleAgentKit" target="_blank">GitHub</a>
-        <span>·</span>
-        <a href="https://mantle-agent-kit.vercel.app" target="_blank">Live</a>
-      </div>
-    </div>
-    <div class="footer-right">
-      <div class="footer-disc">DEMO · Read-Only · Mantle Mainnet<br>No private keys. No transactions. Safe by design.</div>
-    </div>
-  </footer>
-
+ <!-- HEADER -->
+ <header>
+ <div class="header-left">
+ <div class="logo">MANTLE<span>AGENT</span>KIT</div>
+ <div class="logo-sub">Live Agent Dashboard · Mantle Mainnet</div>
+ </div>
+ <div class="header-right">
+ <div class="demo-badge">DEMO · READ-ONLY</div>
+ <div class="network-badge">
+ <span class="net-dot" id="netDot"></span>
+ <span id="netLabel">Connecting...</span>
+ </div>
+ </div>
+ </header>
+ <!-- AGENT STATUS ROW -->
+ <div class="status-row">
+ <div class="stat-box">
+ <div class="stat-label">Agent Status</div>
+ <div class="stat-val" id="agentStatus">—</div>
+ </div>
+ <div class="stat-box">
+ <div class="stat-label">Uptime</div>
+ <div class="stat-val" id="agentUptime">—</div>
+ </div>
+ <div class="stat-box">
+ <div class="stat-label">Loop Count</div>
+ <div class="stat-val" id="loopCount">—</div>
+ </div>
+ <div class="stat-box">
+ <div class="stat-label">Last Poll</div>
+ <div class="stat-val" id="lastPoll">—</div>
+ </div>
+ <div class="stat-box">
+ <div class="stat-label">Latest Block</div>
+ <div class="stat-val" id="latestBlock">—</div>
+ </div>
+ </div>
+ <!-- WALLET LOOKUP -->
+ <div class="section">
+ <div class="sec-label"><span class="sn">01</span> Monitor Any Wallet</div>
+ <div class="card">
+ <div class="card-title">Query Mantle Mainnet</div>
+ <p class="card-desc">Enter any Mantle mainnet wallet address. The agent will fetch live balance and recent transactions — no wallet connection required.</p>
+ <div class="input-row">
+ <input
+ type="text"
+ id="walletInput"
+ class="wallet-input"
+ placeholder="0x... Mantle mainnet address"
+ spellcheck="false"
+ />
+ <button class="query-btn" id="queryBtn" onclick="queryWallet()">
+ <span id="queryBtnText">Query Agent</span>
+ </button>
+ </div>
+ <div id="walletResult" class="wallet-result hidden"></div>
+ </div>
+ </div>
+ 
+ <div class="section">
+ <div class="sec-label"><span class="sn">02</span> Agent's Monitored Wallet</div>
+ <div class="card" id="monitorCard">
+ <div class="card-title">Primary Watch Target</div>
+ <div id="monitorData">
+ <div class="loading-line"></div>
+ <div class="loading-line short"></div>
+ <div class="loading-line"></div>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="section">
+ <div class="sec-label"><span class="sn">03</span> Recent Transactions</div>
+ <div class="card">
+ <div class="card-title">Latest On-Chain Activity</div>
+ <div id="txList">
+ <div class="loading-line"></div>
+ <div class="loading-line short"></div>
+ <div class="loading-line"></div>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="section">
+ <div class="sec-label"><span class="sn">04</span> Agent Poll History</div>
+ <div class="card">
+ <div class="card-title">Loop Log</div>
+ <div id="historyList">
+ <div class="loading-line"></div>
+ <div class="loading-line short"></div>
+ </div>
+ </div>
+ </div>
+ 
+ <footer>
+ <div class="footer-left">
+ <div class="footer-logo">MANTLE<span>AGENT</span>KIT</div>
+ <div class="footer-links">
+ <a href="https://x.com/SANXARR234" target="_blank">@SANXARR234</a>
+ <span>·</span>
+ <a href="https://github.com/sanxarrr234/MantleAgentKit" target="_blank">GitHub</a>
+ <span>·</span>
+ <a href="https://mantle-agent-kit.vercel.app" target="_blank">Live</a>
+ </div>
+ </div>
+ <div class="footer-right">
+ <div class="footer-disc">DEMO · Read-Only · Mantle Mainnet<br>No private keys. No transactions. Safe by design.</div>
+ </div>
+ </footer>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
