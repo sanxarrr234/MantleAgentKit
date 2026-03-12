@@ -19,10 +19,14 @@ WALLET_ADDRESS = os.getenv("WALLET_ADDRESS", "")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "300"))
 MANTLE_RPC_URL = os.getenv("MANTLE_RPC_URL", "https://rpc.sepolia.mantle.xyz")
 
-storage = Storage()
 rpc = MantleRPC(MANTLE_RPC_URL)
 
-def run_agent():
+
+def run_agent(storage: Storage = None):
+  
+    if storage is None:
+        storage = Storage()
+
     log.info("=" * 50)
     log.info("MantleAgentKit — Starting Agent")
     log.info(f"Wallet  : {WALLET_ADDRESS or 'NOT SET'}")
@@ -43,6 +47,7 @@ def run_agent():
             balance = rpc.get_balance(WALLET_ADDRESS)
             txs = rpc.get_recent_transactions(WALLET_ADDRESS)
             block = rpc.get_latest_block()
+
             snapshot = {
                 "loop": loop_count,
                 "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -55,10 +60,14 @@ def run_agent():
             storage.save_snapshot(snapshot)
             log.info(f"Balance : {balance} MNT")
             log.info(f"Block   : {block}")
+            log.info(f"TXs     : {len(txs)} found")
+
         except Exception as e:
             log.error(f"Poll failed: {e}")
             storage.save_error(str(e), loop_count)
+
         time.sleep(POLL_INTERVAL)
+
 
 if __name__ == "__main__":
     run_agent()
